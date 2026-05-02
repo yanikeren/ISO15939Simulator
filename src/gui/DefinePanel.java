@@ -7,15 +7,19 @@ public class DefinePanel extends JPanel {
 
         setLayout(new BorderLayout());
 
-        JLabel label = new JLabel("Define Step", JLabel.CENTER);
-        add(label, BorderLayout.CENTER);
+        add(new JLabel("Define Step", JLabel.CENTER), BorderLayout.CENTER);
+
+        JPanel buttons = new JPanel();
 
         JButton back = new JButton("Back");
+        JButton next = new JButton("Next");
 
-        back.addActionListener(e -> {
-            cardLayout.previous(mainPanel);
-        });
+        back.addActionListener(e -> cardLayout.previous(mainPanel));
+        next.addActionListener(e -> cardLayout.next(mainPanel));
 
-        add(back, BorderLayout.SOUTH);
+        buttons.add(back);
+        buttons.add(next);
+
+        add(buttons, BorderLayout.SOUTH);
     }
 }

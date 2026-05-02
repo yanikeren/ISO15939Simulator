@@ -7,7 +7,23 @@ public class PlanPanel extends JPanel {
 
         setLayout(new BorderLayout());
 
-        add(new JLabel("Plan Step", JLabel.CENTER), BorderLayout.CENTER);
+        JLabel title = new JLabel("Step 3: Plan", JLabel.CENTER);
+        add(title, BorderLayout.NORTH);
+
+        String[] columns = {"Metric", "Coefficient", "Direction", "Range", "Unit"};
+
+        Object[][] data = {
+                {"SUS Score", 50, "Higher", "0-100", "points"},
+                {"Onboarding Time", 50, "Lower", "0-60", "min"},
+                {"Video Start Time", 50, "Lower", "0-15", "sec"},
+                {"Concurrent Users", 50, "Higher", "0-600", "users"}
+        };
+
+        JTable table = new JTable(data, columns);
+
+        JScrollPane scrollPane = new JScrollPane(table);
+
+        add(scrollPane, BorderLayout.CENTER);
 
         JPanel buttons = new JPanel();
 

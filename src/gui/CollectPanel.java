@@ -1,5 +1,13 @@
+package gui;
+
+import data.ScenarioData;
+import model.Dimension;
+import model.Metric;
+
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class CollectPanel extends JPanel {
 
@@ -7,49 +15,43 @@ public class CollectPanel extends JPanel {
 
         setLayout(new BorderLayout());
 
-        JLabel title = new JLabel("Step 4: Collect", JLabel.CENTER);
-        add(title, BorderLayout.NORTH);
-
-        String[] columns = {"Metric", "Value", "Score"};
-
-        Object[][] data = {
-                {"SUS Score", 80, calculateScore(80, 0, 100, true)},
-                {"Onboarding Time", 10, calculateScore(10, 0, 60, false)}
+        String[] columns = {
+                "Metric",
+                "Value",
+                "Score"
         };
 
-        JTable table = new JTable(data, columns);
+        DefaultTableModel model =
+                new DefaultTableModel(columns,0);
 
-        JScrollPane scrollPane = new JScrollPane(table);
-        add(scrollPane, BorderLayout.CENTER);
+        ArrayList<Dimension> dimensions =
+                ScenarioData.getData();
 
-        JPanel buttons = new JPanel();
+        for(Dimension d : dimensions) {
 
-        JButton back = new JButton("Back");
-        JButton next = new JButton("Next");
+            for(Metric m : d.getMetrics()) {
 
-        back.addActionListener(e -> cardLayout.previous(mainPanel));
-        next.addActionListener(e -> cardLayout.next(mainPanel));
+                Object[] row = {
 
-        buttons.add(back);
-        buttons.add(next);
+                        m.getName(),
+                        m.getValue(),
+                        m.calculateScore()
+                };
 
-        add(buttons, BorderLayout.SOUTH);
-    }
-
-    // SCORE HESAPLAMA
-    private double calculateScore(double value, double min, double max, boolean higherBetter) {
-
-        double score;
-
-        if (higherBetter) {
-            score = 1 + (value - min) / (max - min) * 4;
-        } else {
-            score = 5 - (value - min) / (max - min) * 4;
+                model.addRow(row);
+            }
         }
 
-        // 0.5 yuvarlama
-        score = Math.round(score * 2) / 2.0;
+        JTable table = new JTable(model);
 
-        return score;
+        add(new JScrollPane(table));
+
+        JButton nextButton = new JButton("Next");
+
+        nextButton.addActionListener(e ->
+                cardLayout.show(mainPanel,"5")
+        );
+
+        add(nextButton, BorderLayout.SOUTH);
     }
 }

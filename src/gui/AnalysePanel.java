@@ -1,51 +1,108 @@
+package gui;
+
+import data.ScenarioData;
+import model.Dimension;
+
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class AnalysePanel extends JPanel {
 
     public AnalysePanel(CardLayout cardLayout, JPanel mainPanel) {
 
-        setLayout(new BorderLayout());
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        JLabel title = new JLabel("Step 5: Analyse", JLabel.CENTER);
-        add(title, BorderLayout.NORTH);
+        setBorder(BorderFactory.createEmptyBorder(30,30,30,30));
 
-        // Örnek dimension skorları
-        double usability = 4.5;
-        double performance = 3.0;
-        double reliability = 2.5;
+        ArrayList<Dimension> dimensions =
+                ScenarioData.getData();
 
-        JTextArea result = new JTextArea();
-        result.setEditable(false);
+        double lowestScore = 999;
 
-        // en düşük bul
-        double min = usability;
-        String name = "Usability";
+        String lowestName = "";
 
-        if (performance < min) {
-            min = performance;
-            name = "Performance";
+        for(Dimension d : dimensions) {
+
+            double average =
+                    d.calculateAverage();
+
+            JProgressBar bar =
+                    new JProgressBar(0,100);
+
+            bar.setValue((int)(average * 20));
+
+            bar.setString(
+                    d.getName()
+                            + " Score : "
+                            + String.format("%.2f", average)
+            );
+
+            bar.setStringPainted(true);
+
+            add(bar);
+
+            add(Box.createVerticalStrut(20));
+
+            if(average < lowestScore) {
+
+                lowestScore = average;
+
+                lowestName = d.getName();
+            }
         }
 
-        if (reliability < min) {
-            min = reliability;
-            name = "Reliability";
+        double gap = 5.0 - lowestScore;
+
+        JLabel lowestLabel =
+                new JLabel(
+                        "Lowest Dimension : "
+                                + lowestName
+                );
+
+        JLabel gapLabel =
+                new JLabel(
+                        "Gap Value : "
+                                + String.format("%.2f", gap)
+                );
+
+        String level;
+
+        if(lowestScore >= 4.5) {
+
+            level = "Excellent";
+
+        } else if(lowestScore >= 3.5) {
+
+            level = "Good";
+
+        } else if(lowestScore >= 2.5) {
+
+            level = "Needs Improvement";
+
+        } else {
+
+            level = "Poor";
         }
 
-        result.setText(
-                "Usability Score: " + usability +
-                        "\nPerformance Score: " + performance +
-                        "\nReliability Score: " + reliability +
-                        "\n\nLowest Dimension: " + name +
-                        "\nScore: " + min +
-                        "\nNeeds improvement!"
+        JLabel levelLabel =
+                new JLabel(
+                        "Quality Level : "
+                                + level
+                );
+
+        add(lowestLabel);
+
+        add(gapLabel);
+
+        add(levelLabel);
+
+        JButton backButton = new JButton("Back");
+
+        backButton.addActionListener(e ->
+                cardLayout.show(mainPanel,"4")
         );
 
-        add(new JScrollPane(result), BorderLayout.CENTER);
-
-        JButton back = new JButton("Back");
-        back.addActionListener(e -> cardLayout.previous(mainPanel));
-
-        add(back, BorderLayout.SOUTH);
+        add(backButton);
     }
 }

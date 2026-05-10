@@ -1,7 +1,7 @@
 
-
 import javax.swing.*;
 import java.awt.*;
+import gui.*;
 
 public class Main {
 
